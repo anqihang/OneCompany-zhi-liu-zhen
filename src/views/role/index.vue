@@ -53,7 +53,7 @@
                     <el-checkbox
                       :label="item0.aid"
                       v-model="sendPer"
-                      v-if="item0.aid&&item0.aid!=28"
+                      v-if="item0.aid && item0.aid != 28"
                       @change="childCheck(item0, item)"
                       >添加</el-checkbox
                     >
@@ -122,14 +122,16 @@
             v-if="per.includes('14')"
             >编辑</el-button
           >
-          <el-button
-            type="danger"
-            icon="el-icon-delete"
-            size="small"
-            v-if="per.includes('15')"
-            @click="deleteRoleInfo(scope.row.id)"
-            >删除</el-button
-          >
+          <el-popconfirm style="margin-left:10px;" title="确定删除" @onConfirm="deleteRoleInfo(scope.row.id)">
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="small"
+              v-if="per.includes('15')"
+              
+              slot="reference"
+              >删除</el-button>
+            </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -222,7 +224,7 @@ export default {
     shwoPer() {
       getRolesPer().then((res) => {
         let list = res.data.permission_p_list;
-        console.log(1,list);
+        console.log(1, list);
         let pers = [];
         for (const iterator of list) {
           let obj = {};
@@ -235,13 +237,13 @@ export default {
               objSon.name = iterator0.title;
               objSon.id = iterator0.id;
               if (iterator0.children.length > 0) {
-                if(iterator0.title!='设备管理'){
-                objSon.aid = iterator0.children[0].id;
-                objSon.eid = iterator0.children[1].id;
-                objSon.did = iterator0.children[2].id;
-                }else {
+                if (iterator0.title != "设备管理") {
+                  objSon.aid = iterator0.children[0].id;
+                  objSon.eid = iterator0.children[1].id;
+                  objSon.did = iterator0.children[2].id;
+                } else {
                   objSon.eid = iterator0.children[0].id;
-                objSon.did = iterator0.children[1].id;
+                  objSon.did = iterator0.children[1].id;
                 }
               }
               childArr.push(objSon);
@@ -302,9 +304,9 @@ export default {
           message: "删除成功",
           type: "success",
         });
+      this.fetchData();
       });
       this.listLoading = false;
-      this.fetchData();
     },
     //编辑按钮
     edit(id) {

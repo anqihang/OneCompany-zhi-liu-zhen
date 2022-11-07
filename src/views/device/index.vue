@@ -1,12 +1,22 @@
 <template>
   <div class="app-container">
     device
-    <el-dialog :visible.sync="dialogVisible">
+    <el-dialog :visible.sync="dialogVisible" :before-close="closeDialog">
       <el-form>
         <el-form-item>
-          <el-cascader v-model="value" :options="options"></el-cascader>
+          <el-cascader
+            v-model="value"
+            :options="options"
+            :show-all-levels="false"
+          ></el-cascader>
         </el-form-item>
       </el-form>
+      <div slot="footer">
+        <el-button @click="closeDialog">取消</el-button>
+        <el-button type="primary" v-no-more-click @click="sendNewPatient"
+          >确定</el-button
+        >
+      </div>
     </el-dialog>
 
     <el-form>
@@ -16,7 +26,7 @@
           placeholder="搜索"
           style="width: 500px; float: right"
           class="input-with-select"
-          @keydown.enter="searchInfo"
+          @keydown.enter.native="searchInfo"
         >
           <el-select
             v-model="select"
@@ -53,12 +63,29 @@
           {{ scope.row.device_mac }}
         </template>
       </el-table-column>
-      <el-table-column label="患者" align="center">
+      <el-table-column label="患者信息" align="center">
         <template slot-scope="scope">
-          {{ scope.row.patient_name }}
+          <el-popover width="400" placement="top" trigger="click">
+            <el-button slot="reference" @click="showPatienInfo(scope.row.id)">{{
+              scope.row.patient_name
+            }}</el-button>
+            <div>
+              <ul>
+                <li>
+                  性别：<span>{{ patientInfo.sex }}</span>
+                </li>
+                <li>
+                  病房号：<span>{{ patientInfo.sickroom }}</span>
+                </li>
+                <li>
+                  科室：<span>{{ patientInfo.section_name }}</span>
+                </li>
+              </ul>
+            </div>
+          </el-popover>
         </template>
       </el-table-column>
-      <el-table-column label="历史信息" align="center">
+      <el-table-column label="设备历史信息" align="center">
         <template slot-scope="scope">
           <!-- {{ scope.row. }} -->
         </template>
@@ -85,7 +112,9 @@
             <el-button size="small" type="primary" @click="changeBind"
               >换绑</el-button
             >
-            <el-button type="danger" size="small" @click="disabled(scope.row)">禁用</el-button>
+            <el-button type="danger" size="small" @click="disabled(scope.row)"
+              >禁用</el-button
+            >
           </template>
           <span v-if="scope.row.device_active == 2">已注销</span>
         </template>
@@ -95,7 +124,12 @@
 </template>
 
 <script>
-import { getDeviceList, personSectionList,getWardList } from "@/api/table";
+import {
+  getDeviceList,
+  getWardList,
+  getDeviceInfo,
+  getPatient,
+} from "@/api/table";
 
 export default {
   data() {
@@ -107,6 +141,7 @@ export default {
       select: "",
       options: [],
       value: [],
+      patientInfo: {},
     };
   },
   created() {
@@ -121,7 +156,6 @@ export default {
       this.listLoading = true;
       getDeviceList()
         .then((response) => {
-          console.log(1, response);
           this.list = response.data.list;
         })
         .finally(() => {
@@ -130,49 +164,66 @@ export default {
     },
     changeBind() {
       this.dialogVisible = true;
-      let s=[],w=[];
-      new Promise((resolve)=>{
-
-        personSectionList().then((res) => {
-          // s=res.data;
-          resolve(res.data)
-        });
-      }).then(res=>{
-
-        for (const iterator of res) {
-            let obj = {};
-            obj.value = iterator.id;
-            obj.label = iterator.section_name;
-            // obj.children = [];
-        //     // for (const iterator0 of w) {
-        //     //   let obj0={};
-        //     //   obj0.value=iterator0.id;
-        //     //   obj0.label=iterator0.sickroom;
-        //     //   obj.children.push(obj0);
-        //     // }
-            this.options.push(obj);
+      getDeviceInfo().then((res) => {
+        let c = [];
+        for (const iterator of res.data.list) {
+          let obj = {};
+          obj.value = iterator.id;
+          obj.label = iterator.section_name;
+          obj.children = [];
+          if (iterator.children.length > 0) {
+            for (const iterator0 of iterator.children) {
+              let obj0 = {};
+              obj0.value = iterator0.id;
+              obj0.label = iterator0.sickroom;
+              obj0.children = [];
+              if (iterator0.children.length > 0) {
+                for (const iterator1 of iterator0.children) {
+                  let obj1 = {};
+                  obj1.value = iterator1.id;
+                  obj1.label = iterator1.patient_name;
+                  obj0.children.push(obj1);
+                }
+              }
+              obj.children.push(obj0);
+            }
           }
-          console.log(this.options);
-      })
-      // getWardList().then(res=>{
-      //   w=res.data;
-      // })
-
+          c.push(obj);
+        }
+        this.options = c;
+      });
     },
     searchInfo() {
+      console.log(this.search, this.select);
       this.fetchData();
     },
-    disabled(row){
-      this.listLoading=true;
-      sendDisable(row.id).then(res=>{
+    //发送换绑信息
+    sendNewPatient() {
+      this.closeDialog();
+      console.log(1, this.value);
+    },
+    disabled(row) {
+      this.listLoading = true;
+      sendDisable(row.id).then((res) => {
         this.$message({
-          message:res.msg,
-          type:'success'
-        })
-        this.listLoading=false;
-      })
-      this.listLoading=false;
-    }
+          message: res.msg,
+          type: "success",
+        });
+        this.fetchData();
+        this.listLoading = false;
+      });
+      this.listLoading = false;
+    },
+    showPatienInfo(id) {
+      this.listLoading = true;
+      getPatient(id).then((res) => {
+        console.log(2,res);
+        this.patientInfo = res.data[0];
+        console.log(1,this.patientInfo);
+        this.listLoading = false;
+      });
+      this.listLoading = false;
+    },
   },
 };
 </script>

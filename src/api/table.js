@@ -295,12 +295,27 @@ export function getDeviceList(data){
     data
   })
 }
+export function getPatient(id){
+  return request({
+    url:'/device/patient_info',
+    method:'post',
+    data:{
+      patient_id:id
+    }
+  })
+}
 //换绑
 export function sendChangeBind(data){
   return request({
     url:"",
     method:'post',
     data
+  })
+}
+export function getDeviceInfo(){
+  return request({
+    url:'/device/device_bind_info',
+    method:'get'
   })
 }
 // 禁用

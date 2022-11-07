@@ -19,7 +19,11 @@
           <el-input v-model="userInfo.account" style="width: 300px"></el-input>
         </el-form-item>
         <el-form-item label="密码" label-width="100px" prop="password">
-          <el-input show-password v-model="userInfo.password" style="width: 300px"></el-input>
+          <el-input
+            show-password
+            v-model="userInfo.password"
+            style="width: 300px"
+          ></el-input>
         </el-form-item>
 
         <el-form-item label="角色" label-width="100px" prop="role_id">
@@ -248,9 +252,9 @@ export default {
             //添加接口
             addUsersInfo(sendD).then((response) => {
               this.$message({
-                  message: "添加成功",
-                  type: "success",
-                });
+                message: "添加成功",
+                type: "success",
+              });
               this.listLoading = false;
               this.dialogVisible = false;
             });
@@ -261,18 +265,20 @@ export default {
             sendD.user_id = this.user_id;
             console.log(2, sendD);
             // return
-            editUsersInfo(sendD).then((res) => {
-              this.$message({
-                message: "编辑成功",
-                type: "success",
+            editUsersInfo(sendD)
+              .then((res) => {
+                this.$message({
+                  message: "编辑成功",
+                  type: "success",
+                });
+              })
+              .finally(() => {
+                this.listLoading = false;
+                this.dialogVisible = false;
+                this.fetchData();
+                this.closeDialog();
               });
-              this.listLoading = false;
-              this.dialogVisible = false;
-            });
           }
-          this.fetchData();
-          this.closeDialog();
-          this.listLoading = false;
         } else {
           console.log("error submit!!");
           return false;
