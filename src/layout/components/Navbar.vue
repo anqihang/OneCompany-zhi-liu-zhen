@@ -134,7 +134,9 @@ export default {
       localStorage.removeItem("per");
       // must remove  token  first
       resetRouter();
-      this.$router.push("/login");
+      // location.reload();
+      location.href = "/";
+      // this.$router.push("/login");
       // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     },
   },

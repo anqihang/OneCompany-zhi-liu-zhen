@@ -128,14 +128,20 @@
             v-if="per.includes('23')"
             >编辑</el-button
           >
-          <el-button
-            size="small"
-            type="danger"
-            icon="el-icon-delete"
-            @click="deleteP(scope.row)"
-            v-if="per.includes('24')"
-            >删除</el-button
+          <el-popconfirm
+            title="确认删除"
+            style="margin-left: 10px"
+            @onConfirm.once="deleteP(scope.row)"
           >
+            <el-button
+              size="small"
+              type="danger"
+              icon="el-icon-delete"
+              v-if="per.includes('24')"
+              slot="reference"
+              >删除</el-button
+            >
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>

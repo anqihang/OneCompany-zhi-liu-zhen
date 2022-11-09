@@ -85,16 +85,19 @@
           >
             编辑
           </el-button>
+          <el-popconfirm title="确认删除" style="margin-left:10px;" @onConfirm.once="deleteP(scope.row)">
+
           <el-button
             icon="el-icon-delete"
             type="danger"
             v-if="per.includes('21')"
-            @click="deleteP(scope.row)"
+            slot="reference"
             size="small"
-            v-no-more-click
           >
             删除
           </el-button>
+        </el-popconfirm>
+
         </template>
       </el-table-column>
     </el-table>

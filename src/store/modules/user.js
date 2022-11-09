@@ -79,10 +79,11 @@ const actions = {
     return new Promise((resolve, reject) => {
       // logout(state.token)
       //   .then(() => {
-          removeToken("Token"); // must remove  token  first
+          localStorage.removeItem("Token"); // must remove  token  first
           resetRouter();
-          localStorage.removeItem('routers')
-          commit("RESET_STATE");
+          localStorage.removeItem('per');
+          resolve();
+          // commit("RESET_STATE");
           // resolve();
         // })
         // .catch((error) => {

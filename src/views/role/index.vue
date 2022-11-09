@@ -122,7 +122,7 @@
             v-if="per.includes('14')"
             >编辑</el-button
           >
-          <el-popconfirm style="margin-left:10px;" title="确定删除" @onConfirm="deleteRoleInfo(scope.row.id)">
+          <el-popconfirm style="margin-left:10px;" title="确定删除" @onConfirm.once="deleteRoleInfo(scope.row.id)" >
             <el-button
               type="danger"
               icon="el-icon-delete"

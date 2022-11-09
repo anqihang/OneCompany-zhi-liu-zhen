@@ -77,8 +77,8 @@ export default {
       }
     };
     var checkSort = (rule, value, callback) => {
-      if (/^[1-99]$/.test(value) == false) {
-        callback(new Error("请输入权重(1-99)"));
+      if (/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(value) == false) {
+        callback(new Error("请输入权重(1-999)"));
       } else {
         callback();
       }
@@ -101,7 +101,8 @@ export default {
           { validator: checkChina, trigger: "blur" },
         ],
         sort: [
-          { required: true, message: "请输入权重(数字1-100)", trigger: "blur" },
+          {  required: true, message: "请输入权重(数字1-100)", trigger: "blur" },
+          // {min:1,max:3,message:'范围为0-99',trigger:'blur'}
           { validator: checkSort, trigger: "blur" },
         ],
       },

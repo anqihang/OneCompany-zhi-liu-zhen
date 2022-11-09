@@ -292,7 +292,10 @@ export function getDeviceList(data){
   return request({
     url:'/device/device_list',
     method:'get',
-    data
+   params:{
+    page:data.page,
+    limit:data.limit
+   }
   })
 }
 export function getPatient(id){
@@ -304,12 +307,25 @@ export function getPatient(id){
     }
   })
 }
-//换绑
-export function sendChangeBind(data){
+export function getDevice(id){
   return request({
-    url:"",
+    url:'/device/device_record',
     method:'post',
-    data
+    data:{
+      device_id:id
+    }
+  })
+}
+//换绑
+export function sendChangeBind(arr){
+  console.log(arr);
+  return request({
+    url:"/device/device_bind",
+    method:'post',
+    data:{
+      device_id:arr.device,
+      patient_id:arr.patient
+    }
   })
 }
 export function getDeviceInfo(){
@@ -326,5 +342,33 @@ export function sendDisable(id){
     data:{
       id:id
     }
+  })
+}
+//搜索
+export function searchInfo(data){
+  return request({
+    url:'/device/device_search',
+    method:'post',
+    data:{
+      id:data.id,
+      content:data.content
+    },
+    params:{
+      page:data.page,
+      limit:data.limit
+    }
+  })
+}
+//watch----------------------------------------
+export function showTestedInfo(){
+  return request({
+    url:'/dashboard/TodayCheck_Record',
+    method:'get',
+  })
+}
+export function showNoTestedInfo(){
+  return request({
+    url:'/dashboard/NotCheck_Record',
+    method:'get',
   })
 }

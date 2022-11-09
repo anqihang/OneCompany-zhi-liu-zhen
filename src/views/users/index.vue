@@ -90,14 +90,16 @@
             v-if="per.includes('17')"
             >编辑</el-button
           >
+        <el-popconfirm title="确认删除" style="margin-left:10px;" @onConfirm.once="deleteUser(scope.row.id)" >
           <el-button
             type="danger"
             icon="el-icon-delete"
             size="small"
-            @click="deleteUser(scope.row.id)"
             v-if="per.includes('18')"
+            slot="reference"
             >删除</el-button
           >
+        </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>

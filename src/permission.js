@@ -26,8 +26,8 @@ router.beforeEach(async (to, from, next) => {
   if (hasToken) {
     if (to.path === "/login") {
       // if is logged in, redirect to the home page
-      // next({ path: "/" });
-      next();
+      next({ path: "/login" });
+      // next();
       NProgress.done();
     } else {
       //#region
@@ -103,7 +103,6 @@ router.beforeEach(async (to, from, next) => {
       }
     }
   } else {
-    console.log(1);
     /* has no token*/
     // await store.dispatch('user/getInfo')
 

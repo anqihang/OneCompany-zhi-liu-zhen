@@ -106,13 +106,13 @@ export default {
       immediate: true,
     },
   },
-  mounted() {
+  // created() {
     //加载后刷新一次
-    if (location.href.indexOf("#reloaded") == -1) {
-      location.href = location.href + "#reloaded";
-      location.reload();
-    }
-  },
+    // if (location.href.indexOf("#reloaded") == -1) {
+    //   location.href = location.href + "#reloaded";
+    //   location.reload();
+    // }
+  // },
   methods: {
     showPwd() {
       if (this.passwordType === "password") {
